@@ -3,7 +3,7 @@ from flask import render_template, request
 from google.cloud import translate_v2 as translate
 
 # Initialize the Google Cloud Translation API client
-translate_client = translate.Client("AIzaSyBmML2nQlobtJh7C3ZcCNxIW6Wr1aWfcyM")
+translate_client = translate.Client("")
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
