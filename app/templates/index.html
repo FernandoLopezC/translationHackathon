@@ -8,16 +8,22 @@
 <body>
     <h1>Google Translate Clone</h1>
 
+
+    <form method="POST">
+        <button type="submit" name="speech">Start Speech Input</button>
+        <p id="speech-output">Your speech will appear here after recording...</p><br><br>
+    </form>
+
     <form method="POST">
         <label for="text">Enter Text:</label><br>
         <textarea id="text" name="text" rows="4" cols="50"></textarea><br><br>
 
         <label for="target_language">Select Target Language:</label><br>
         <select name="target_language">
+            <option value="zh">Chinese (Simplified)</option>
             <option value="es">Spanish</option>
             <option value="fr">French</option>
             <option value="de">German</option>
-            <option value="zh">Chinese (Simplified)</option>
             <option value="ar">Arabic</option>
             <option value="ja">Japanese</option>
             <!-- Add more languages as needed -->
@@ -29,7 +35,38 @@
     {% if translated_text %}
         <h2>Translation Result</h2>
         <p><strong>Detected Source Language:</strong> {{ source_language }}</p>
+        <p><strong>Source text:</strong> {{ text_to_translate }}</p>
         <p><strong>Translated Text:</strong> {{ translated_text }}</p>
+
+         <audio controls>
+            <source src="{{ url_for('static', filename='output.mp3') }}" type="audio/mp3">
+            Your browser does not support the audio element.
+        </audio>
     {% endif %}
+    <script>
+        const startButton = document.getElementById('start-button');
+        const speechOutput = document.getElementById('speech-output');
+        const textArea = document.getElementById('text');
+
+        const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+        recognition.lang = 'en-US';
+        recognition.interimResults = false;
+
+        startButton.addEventListener('click', () => {
+            recognition.start();
+        });
+
+        recognition.addEventListener('result', (event) => {
+            const speechText = event.results[0][0].transcript;
+            speechOutput.textContent = `You said: "${speechText}"`;
+
+            // Insert the recognized speech into the textarea
+            textArea.value = speechText;
+        });
+
+        recognition.addEventListener('end', () => {
+            recognition.stop();
+        });
+    </script>
 </body>
 </html>
