@@ -7,11 +7,18 @@
 </head>
 <body>
     <h1>Google Translate Clone</h1>
-
+    {% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul class=flashes>
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
 
     <form method="POST">
         <button type="submit" name="speech">Start Speech Input</button>
-        <p id="speech-output">Your speech will appear here after recording...</p><br><br>
     </form>
 
     <form method="POST">
@@ -36,10 +43,15 @@
         <h2>Translation Result</h2>
         <p><strong>Detected Source Language:</strong> {{ source_language }}</p>
         <p><strong>Source text:</strong> {{ text_to_translate }}</p>
+
+    <audio controls>
+            <source src="{{ url_for('static', filename='output.mp3') }}" type="audio/mp3">
+            Your browser does not support the audio element.
+        </audio>
         <p><strong>Translated Text:</strong> {{ translated_text }}</p>
 
          <audio controls>
-            <source src="{{ url_for('static', filename='output.mp3') }}" type="audio/mp3">
+            <source src="{{ url_for('static', filename='zh_output.mp3') }}" type="audio/mp3">
             Your browser does not support the audio element.
         </audio>
     {% endif %}

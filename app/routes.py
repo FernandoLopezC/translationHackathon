@@ -1,5 +1,5 @@
 from app import app
-from flask import render_template, request
+from flask import render_template, request, flash
 from google.cloud import translate_v2 as translate
 import os
 import openai
@@ -88,7 +88,7 @@ translate_client = translate.Client("")
 def index():
     translated_text = None
     source_language = None
-    target_language = 'es'  # Default target language (can be changed by user)
+    target_language = 'zh'  # Default target language (can be changed by user)
     text_to_translate = None
     audio_fp = None
     speech_text = None
@@ -98,6 +98,9 @@ def index():
             # Handle speech recognition
             speech_text = speech_to_text()
             text_to_translate = speech_text
+            if text_to_translate == "Sorry, I couldn't understand the audio.":
+                flash("Sorry, I couldn't understand the audio.")
+                return render_template('index.html')
         else:
             # Handle regular text input
             text_to_translate = request.form['text']
@@ -116,8 +119,6 @@ def index():
         # Step 3: Convert the translation to speech using gTTS
         text_to_speech(translated_text, lang=target_language)
         text_to_speech(text_to_translate)
-
-
 
     return render_template('index.html', translated_text=translated_text,
                            source_language=source_language, text_to_translate=text_to_translate,
